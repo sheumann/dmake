@@ -394,16 +394,8 @@ Epilog(int ret_code)
 PUBLIC char *
 Get_current_dir(void)
 {
-#if defined (GNO)
-#define PATH_MAX2 66
-#if ((PATH_MAX + 2) != PATH_MAX2 )
-#error "sysintf.c:  ensure PATH_MAX2 is same as PATH_MAX + 2"
-#endif
-
-   static char buf[PATH_MAX2];    /* must be identical to PATH_MAX + 2 */
-#else
    static char buf[PATH_MAX+2];
-#endif
+
    return(getcwd(buf, sizeof(buf)));
 }
 
