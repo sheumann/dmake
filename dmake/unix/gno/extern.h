@@ -73,6 +73,7 @@
 # if !defined(__GNUC__)
 #  include <gno/gno.h>
 # endif
+# include <unistd.h>
 #endif
 #include "itypes.h"
 #include "stdmacs.h"
