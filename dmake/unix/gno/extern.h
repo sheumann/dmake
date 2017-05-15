@@ -71,7 +71,6 @@
 #include <fcntl.h>
 #if defined(GNO)
 # if !defined(__GNUC__)
-#  include <libc.h>
 #  include <gno/gno.h>
 # endif
 #endif
