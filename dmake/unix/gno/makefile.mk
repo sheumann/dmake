@@ -90,7 +90,7 @@ all: dmake ../../../rmroot/rmroot
 dmake: $(OBJS)
 	$(CC) $(LDFLAGS) -o dmake $(OBJS) $(LDLIBS)
 
-../../../rmroot/rmroot: ../../../rmroot/rmroot.c
+../../../rmroot/rmroot: ../../../rmroot/rmroot.o
 	$(CC) -O -o $@ $<
 
 arlib.o: arlib.c extern.h itypes.h stdmacs.h alloc.h db.h dmake.h struct.h\
