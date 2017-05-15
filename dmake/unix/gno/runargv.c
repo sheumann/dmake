@@ -1,7 +1,3 @@
-#ifdef __CCFRONT__
-#include <14:pragma.h>
-#endif
-
 /* if gsh $PATH parsing ever gets straighted out, remove this */
 #define BACKWARDS
 

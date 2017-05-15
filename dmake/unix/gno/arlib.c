@@ -1,6 +1,3 @@
-#ifdef __CCFRONT__
-#include <14:pragma.h>
-#endif
 /* RCS      -- $Header: /u/dvadura/src/generic/dmake/src/unix/RCS/arlib.c,v 1.2 1992/04/07 04:42:46 dvadura Exp $
 -- SYNOPSIS -- Unix archive manipulation code.
 -- 

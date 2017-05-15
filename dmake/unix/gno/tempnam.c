@@ -1,6 +1,3 @@
-#ifdef __CCFRONT__
-#include <14:pragma.h>
-#endif
 /*LINTLIBRARY*/
 
 #include <stdio.h>

@@ -1,6 +1,3 @@
-#ifdef __CCFRONT__
-#include <14:pragma.h>
-#endif
 /* RCS      -- $Header: /u2/dvadura/src/generic/dmake/src/RCS/stat.c,v 1.1 1992/01/24 03:27:58 dvadura Exp $
 -- SYNOPSIS -- bind a target name to a file.
 -- 

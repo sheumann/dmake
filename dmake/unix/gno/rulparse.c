@@ -1,6 +1,3 @@
-#ifdef __CCFRONT__
-#include <14:pragma.h>
-#endif
 /* RCS      -- $Header: /u2/dvadura/src/generic/dmake/src/RCS/rulparse.c,v 1.1 1992/01/24 03:27:57 dvadura Exp $
 -- SYNOPSIS -- perform semantic analysis on input
 -- 

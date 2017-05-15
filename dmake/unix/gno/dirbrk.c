@@ -1,6 +1,3 @@
-#ifdef __CCFRONT__
-#include <14:pragma.h>
-#endif
 /* RCS      -- $Header$
 -- SYNOPSIS -- define the directory separator string.
 -- 

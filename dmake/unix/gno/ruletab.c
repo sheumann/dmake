@@ -1,6 +1,3 @@
-#ifdef __CCFRONT__
-#include <14:pragma.h>
-#endif
 /* RCS      -- $Header: /u2/dvadura/src/generic/dmake/src/unix/ruletab.c,v 1.1 1992/01/24 03:28:29 dvadura Exp $
 -- SYNOPSIS -- Default initial configuration of dmake.
 -- 
