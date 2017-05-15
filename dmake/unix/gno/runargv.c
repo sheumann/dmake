@@ -12,10 +12,6 @@ static void _finished_child ANSI((int));
 
 static int child_status; /* the exit value of the child process */
 
-/* These two are from lenviron */
-extern char *build_cmd (char *const *argv);
-extern char *build_path (const char *file);
-
 #pragma databank 1
 
 static void child_process(char *path, char *comd) {
@@ -63,7 +59,7 @@ static int execp(const char *file, char *const argv[]) {
 	   /* partial pathname:  is $PATH defined in the environment? */
 	   path = getenv("PATH");
    	if (path) {              /* PATH exists; good start ... */
-         path = build_path (file);
+         path = buildPath (file);
          if (path == NULL) return -1;
    	} else {                 /* no PATH; use default */
 #ifdef BACKWARDS
@@ -71,7 +67,7 @@ static int execp(const char *file, char *const argv[]) {
 #else
       	if (setenv("PATH","/bin /usr/bin",1) != 0) return -1;
 #endif
-      	path = build_path (file);
+      	path = buildPath (file);
       	result = (path == NULL) ? -1 : 0;
       	terrno = errno;     	/* unsetenv may affect errno */
       	unsetenv("PATH");
@@ -81,7 +77,7 @@ static int execp(const char *file, char *const argv[]) {
    }                         
 
    /* build the command line */
-   comd = build_cmd (argv);
+   comd = buildCmd (argv);
    if (comd == NULL) {
 	   terrno = errno;
       free(path);
