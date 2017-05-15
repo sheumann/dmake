@@ -1,7 +1,3 @@
-#ifdef __CCFRONT__
-#include <14:pragma.h>
-#endif
-
 #include <string.h>
 #include <unistd.h>
 
