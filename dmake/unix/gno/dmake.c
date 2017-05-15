@@ -178,7 +178,7 @@ main(int argc, char **argv)
    if (getenv("NOPURGE")==NULL) system("purge >.null");
 
    /* initialize environment */
-   if (initenv() !=0) {	
+   if (environInit() !=0) {	
    	fprintf(stderr,"Failed to initialize environment.  dmake aborted.\n\n");
       exit (-1);
    }
