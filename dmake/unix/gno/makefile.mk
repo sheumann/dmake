@@ -34,7 +34,7 @@ FORKFLAGS = $(__OFLAG) -w -i -r -O   $(DEFINES) $(STACK)
 VAFLAGS   = $(__OFLAG) -w -i -r -O   $(DEFINES) $(STACK)
 MAINFLAGS = $(__OFLAG) -w -i    -O   $(DEFINES) $(STACK)
 LDFLAGS   = 
-LDLIBS    = -l/usr/lib/stack -l/usr/lib/lenviron
+LDLIBS    = 
 
 .ELSE
 
@@ -45,7 +45,7 @@ FORKFLAGS = $(__OFLAG) -w -i -r -O25 $(DEFINES) $(STACK)
 VAFLAGS   = $(__OFLAG) -w -i -r -O8  $(DEFINES) $(STACK)
 MAINFLAGS = $(__OFLAG) -w -i    -G25 $(DEFINES) $(STACK)
 LDFLAGS   = -v
-LDLIBS    = -l/usr/lib/stack -l/usr/lib/lenviron
+LDLIBS    = 
 
 .END
 
