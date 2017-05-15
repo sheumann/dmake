@@ -1,0 +1,135 @@
+Notes on the MSDOS implementation of dmake.
+
+Bootstrapping the binary:
+-------------------------
+   A make.bat file is provided to bootstrap the binary.  The file contains
+   several targets for bootstrapping.  Invoking the batch file with no
+   arguments lists the possibilities shown below.
+
+      INDEX:  You must specify one of:
+	 tcc      - Turbo C 2.0 compile.
+	 tccswp   - Turbo C 2.0 compile of swapping dmake.
+	 bcc      - Borland C++ 2.0 compile.
+	 bccswp   - Borland C++ 2.0 compile of swapping dmake.
+	 msc40    - Microsoft C 4.0 compile.
+	 msc50    - Microsoft C 5.0 compile.
+	 msc51    - Microsoft C 5.1 compile.
+	 msc60    - Microsoft C 6.0 compile.
+	 msc40swp - Microsoft C 4.0, MASM 5.1 compile of swapping dmake.
+	 msc50swp - Microsoft C 5.0, MASM 5.1 compile of swapping dmake.
+	 msc51swp - Microsoft C 5.1, MASM 5.1 compile of swapping dmake.
+	 msc60swp - Microsoft C 6.0, MASM 5.1 compile of swapping dmake.
+	 ztc      - Zortech C++ 2.1 compile.
+	 ztcswp   - Zortech C++ 2.1 compile of swapping dmake.
+
+   Based on the compiler you have installed and whether or not you
+   want the swapping version of dmake, you should select the appropriate
+   target and issue 'make.bat target'.
+
+   The batch file runs a second batch script that comes with the distribution
+   which compiles the sources using the appropriate compiler and flags.  The
+   MSC Versions of the batch files should not require any further user
+   intervention during the compile.  The Turbo-C version, as a final step,
+   invokes tlink with two response files.  The second of these response files,
+   named in msdos/tccdos/mk*.bat, contains absolute path names to Turbo-C
+   libraries.  You may need to edit these before getting a successful binary
+   linked.
+
+   By default the batch files make an executable that will run on an 8088
+   cpu and up.  You can change that by making the initial version and then
+   editing the config.mk files found in either msdos/tccdos or msdos/mscdos
+   (depending on the compiler you use), and selecting a diferrent cpu type by
+   supplying the appropriate compiler flags.  You then need to remake dmake
+   again but this time use dmake itself, see below.
+
+   Note that the file msdos/exec.uue is a uuencoded version of a BCC++
+   compiled exec.obj (from exec.asm).  If you do not have an assembler
+   either microsoft MASM or Borland TASM (or some other), you can uudecode
+   this file and put it into the appropriate objects directory.
+
+
+Using dmake to Make itself:
+---------------------------
+   If you use dmake to make itself you must first set a number of makefile
+   control variables, either through the environment or on the command line.
+
+   The following variables must be set:
+
+	OS	       - defines operating system (must be set)
+	OSRELEASE      - particular version of it.
+	OSENVIRNOMENT  - more customization
+
+   These three variables should be defined in your environment.  Valid values
+   for them are listed in the readme/options file.  For example, if you
+   are using MSDOS, with Turbo-C then the valid settings are:
+
+	set OS=msdos
+	set OSRELEASE=tccdos
+	set OSENVIRONMENT=
+
+   dmake searches for an initial startup file, you should set the environment
+   variable MAKESTARTUP to contain the full path to the startup file, eg:
+
+	set MAKESTARTUP=d:\usr\lib\startup.mk
+
+   The dmake makefile has several variables that can be user specified and
+   default to reasonable values if not set.
+
+	MODEL   - defines the model to compile, valid values are
+		  {s,c,m, or l}, defaults to 'l' (ie. large) model
+		  if unspecified.
+
+	MSC_VER - defines the version of Microsoft C in use, should be set to
+		  one of 4.0, 5.0, 5.1 or 6.0; defaults to 6.0.
+
+	SWAP    - If set to 'y', compile the dmake swapping version of
+		  spawnvpe.  This has the effect of turning on swapping of the
+		  executable to disk if the MSDOS version is made.
+
+	DEBUG   - If set to '1' then make the debugging version of dmake, this
+		  will also set MODEL to 'l'.
+
+   To set the above variables you must specify them on the dmake command line
+   or insert them into the makefile.mk definition.
+
+
+Memory Requirements and Swapping:
+---------------------------------
+   The swapping code currently only swaps to DISK, I have left hooks
+   in to accomodate XMS and EMS, I have some code that performs the
+   necessary XMS/EMS accesses but have not incorporated it in yet.
+   It appears that a ramdisk seems to work just fine.  If anyone
+   wishes to fill in the hooks please do and I'll be happy to include
+   them in future distributions.
+
+
+^C and stopping a make:
+-----------------------
+   Thanks to the efforts of Len Reed, appears to now work.  I have been unable
+   to hang my machine if it's swapped out and I hit ^C a couple thousand times.
+
+
+Other notes:
+------------
+   dmake does not care if you are running command.com or some other command
+   interpretter, you must however specify the proper values of the environment
+   variables SHELL, SHELLFLAGS, GROUPSHELL, and GROUPFLAGS in order for things
+   to work correctly.  Read the man page FIRST, if you still have trouble
+   then send email.
+
+   Group recipes under DOS that use command.com as the command interpretter
+   require you to set the GROUPSUFFIX macro.
+
+   As shipped the startup.mk files for the DOS version try to figure out what
+   command interpretter you are using and set things up appropriately.
+   Two command interpretters are supported in the shipped startup.mk file,
+   command.com, and the MKS Korn shell.
+
+   dmake does not contain any builtin commands.  It gets all commands it
+   executes from an external file system.  It is therefore most useful if it
+   is used in conjunction with an environment similar to that provided by
+   the MKS Tool Kit, or equivalent.
+
+   dmake now supports the MKS argument passing conventions.  The facility is
+   enabled by setting .MKSARGS:=1.  It is set by default in the startup.mk file
+   if an MKS Korn shell is detected as being the active command interpretter.

@@ -1,0 +1,48 @@
+.TH RMROOT 1 "Commands and Applications" "17 April 1994" "Version 1.0"
+.SH NAME
+rmroot - remove the corresponding .root file for .a or .o files.
+.SH SYNOPSIS
+.B rmroot
+.I file1
+[ \fIfile2\fR ... ]
+.SH DESCRIPTION
+.B rmroot
+takes as arguments file names ending in
+.B .o
+or
+.B .a
+and deletes the corresponding
+.B .root
+file.
+.LP
+If invoked with no arguments, or invoked with file names not ending in either
+.B .o
+or
+.BR .a ", " rmroot
+will do nothing.  Where file names are mixed,
+.B rmroot
+will act only upon those with the proper suffixes.
+.SH EXAMPLES
+.B "rmroot file1.a file2.o"
+will delete
+.BR file1.root " and " file2.root .
+.LP
+.B "rmroot file3 file4.o file5.1"
+will delete
+.BR file4.root .
+.LP
+.B "rmroot"
+will delete nothing.
+.SH HISTORY
+.B rmroot
+first appeared with
+.B dmake
+Apple IIgs version 1.0 as a method of deleting intermediate targets produced
+while building on an inference.
+.SH SEE ALSO
+.BR dmake (1)
+.SH AUTHOR
+.nf
+Devin Reade     glyn@cs.ualberta.ca
+                gdr@myrias.ab.ca
+.fi

@@ -1,0 +1,42 @@
+Notes on the Macintosh implementation of dmake:
+
+This port for the Macintosh is specifically designed to be run
+under MPW.
+
+I had to make a couple of changes to dmake in order to get it to work
+on the Mac.  First, MPW provides no documented way to run a
+subprocess, so when you use dmake, you MUST use the -n option and
+execute the output.  Typically, you will probably want to write a
+simple script file to do these operations for you.
+
+I added some code so that the Macintosh version of dmake can
+use UNIX-style directories to specify include paths and target
+and dependency file names.  I.e., if you specify a file "/dir/file",
+dmake will look at the file "dir:file".  However, Mac dmake does not
+do any translation from files specified by UNIX-style directories
+in the recipe line that gets executed.  If you need to translate,
+you can use substitution commands.  (For example,
+":$(RELATIVEUNIXFILE:s,/,:,)".)  This code was added so one could
+execute dmake's makefile, and also so one would have an easier time
+porting other UNIX makefiles.  I would suggest you stick with
+Macintosh-style directories for all other makefiles.
+
+I was getting memory trashing errors when I was reading in
+environmental variables >4K with the -e option.  I had trouble
+tracking down exactly what was causing the problem, so decided it
+was easier to just clip the length before sending it to the dmake
+parser.  I arbitrarily picked 1K as the maximum length, figuring
+it was highly unlikely anyone really needed a variable longer than
+that from within a makefile.  (This error may be related to the
+value you set for MAXLINELENGTH, so to be safe, you should keep
+it >1K.)
+
+In order to run dmake, you must set (and export) the environmental
+variable "OS" to "mac".
+
+Finally, dmake looks for the file startup.mk in
+"{MPW}tools:{DMSTARTUPDIR}".  "DMSTARTUPDIR" can be defined if you
+want to override the default tools directory location.
+
+Micah Doyle
+micah@leland.Stanford.EDU

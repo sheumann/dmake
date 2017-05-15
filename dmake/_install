@@ -1,0 +1,219 @@
+INSTALLATION INSTRUCTIONS
+
+This file contains the instructions required to install and create the
+appropriate version of dmake.
+
+NOTE:  If you use dmake to bootstrap a NEW DISTRIBUTED version or to remake
+       it after applying a PATCH, it may be NECESSARY to use the batch
+       script instead of dmake as a patch may incorporate changes to the
+       makefile.mk file and associated config.mk files that cannot be
+       handled by earlier versions of dmake.  The use of the batch files
+       is the ONLY supported method of making a new release or update
+       version.
+
+NOTE:  If you do not plan to use the MAKESTARTUP variable in your
+       environment, change the value of the variable in the file
+       "./unix/startup.h" BEFORE you bootstrap this package.
+
+NOTE:  NAME_MAX is used in sysintf.c to limit the name of a file name
+       component before performing a stat operation.  If you have problems
+       with file name lengths make certain that NAME_MAX is correctly set.
+
+       NAME_MAX is set either in limits.h or in unistd.h (for POSIX systems)
+       or in stdio.h.  If it is not set anywhere then dmake's own "posix.h"
+       file will define a reasonable default value, this may or may not be
+       reasonable for your system.  If you have trouble with long file names
+       then hunt down the NAME_MAX definition.
+
+NOTE:  This file should really be rewritten :-)
+
+
+
+MAKING THE PROPER VERSION
+
+The list of available versions of dmake has grown quite large.  The best
+method to determine what versions are available for your configuration is to
+simply issue the command 'make' in the source root directory.  Below is a
+partial list of the available versions to give an idea of what is supported.
+Note that this copy of the list is not maintained up to date.
+
+	bsd43	   - Generic BSD 4.3 (eg, true BSD, apollo, Sun OS4, SGI etc)
+	bsd43uw	   - Generic BSD 4.3 at U of Waterloo
+	bsd43vf	   - Generic BSD with no vfprintf in its library  (use this
+		     target if you are missing the vfprintf function in your
+		     C library)
+	sysvr3	   - Generic SysV R3 UNIX
+	sysvr1	   - Generic SysV R1 UNIX
+	386ix      - 386/ix (SysV R3), not tested
+	dynix      - Sequent Symmetry dynix
+	ultrix	   - Ultrix 3.0 system
+	mips       - Any MIPS box
+        os2msc60   - OS/2 with MSC 6.0
+	tos        - Atari-ST using GCC as compiler
+        tcc        - DOS with tcc 2.0
+        tccswp     - swapping DOS version with tcc 2.0
+        msc60      - DOS with MSC 6.0
+        msc60swp   - swapping DOS version with MSC 6.0
+
+The file 'makefile' understands these targets and runs the appropriate script
+to create the correct version.
+
+The source code is organized as follows:
+
+			dmake 		[source for all common functions]
+			  |
+			  |
+	    ----------------------------
+	    |	   |  	    |          |
+	   unix   tos      os2       msdos  [source for OS specific functions]
+	    |	            |          |
+  --------------------    mscdos    -------------------
+  |         |        |              |       |         |
+386ix     bsd43  sysvr[134]      tccdos   bccdos   mscdos  [source for OSRELEASE
+	    |	      				            specific functions] 
+	--------
+	|      |
+       uw      vf   [source for OSENVIRONMENT specific functions]
+
+
+Each of the directories (eg. bsd43, mscdos, tccdos, and sysvr3) contain source
+that is specific to that release of the OS (and possibly C-library)
+To make the appropriate versions of dmake, simply type the command
+
+	'make system'
+
+where system is one of the supplied possibilities.  Note that if you are using
+an earlier version of dmake to make a new version from scratch then you must
+use the command:
+
+	'dmake -f makefile system'
+
+as dmake by default first reads makefile.mk and would thus use the wrong
+makefile for bootstrapping purposes.
+
+The bootstrapping of dmake is accomplished by running a shell script with the
+appropriate compile commands hard coded.
+
+(NOTE:  If you are using MSDOS then, you will actually be using the make.bat
+	scriptfile to make the correct version of dmake for MSDOS.  If you
+	are running a SHELL other than command.com, you may have to perform
+	some extra work to invoke the batch file.
+	
+	Make sure you read the readme/msdos file before attempting to make the
+	MSDOS version, as it contains important configuration and limitation
+	information.)
+
+The making of dmake, echoes the commands being executed, and should proceed
+relatively error free.  Ignore ANY warnings produced by the compile
+They have all be verified and are spurious noise.
+
+UNIX SYSV R3 AND GETCWD
+
+Some versions of UNIX SysV R3 and Xenix use the popen call to capture the
+output of pwd when invoking the C library function getcwd().  These versions
+of the function cause dmake to terminate with the "lost a child" message
+due to the fact that the parent dmake process may catch the pwd and not
+recognize it as a child.  For systems that have this problem use the version
+of dmake that supplies its own getcwd function.  The settings are:
+
+   OS = unix
+   OSRELEASE = sysvr3
+   OSENVIRONMENT = pwd
+
+It is directly available through the 'makefile' by typing one of:
+
+   make sysvr3pwd
+   make xenixpwd
+
+both include the getcwd code but the xenixpwd target compiles for a Xenix
+system.
+
+
+UNIX and "limits.h"
+
+Some compilers do not yet provide the "limits.h" file, if yours is one of
+these then simply copy the file "namemax.h" in the source root directory to
+"limits.h".  Make sure the length of a file name is correctly set in
+"limits.h" as it is processed prior to "namemax.h".
+
+
+STARTUP FILE
+
+dmake requires the loading of a startup file when it is invoked.  The
+path for the startup file is set in the file 'startup.h' found in the
+appropriate system sub-directories.  You may override the value of the
+path variable compiled-in by creating a file at the root source directory
+called startup.h and inserting into that file a definition that is like
+the definition found in the supplied startup.h files.  Alternatively you
+can modify the MAKESTARTUP environment variable to point at the location
+of your startup.mk file.
+
+
+INSTALLATION
+
+To install dmake you must copy the executable to where your system
+locates executables, and you must place a copy of startup.mk (found in the
+root source directory after the build is successfuly completed) into a location
+corresponding to the value of the MAKESTARTUP macro or environment variable.
+You are free to customize the contents of startup.mk.
+
+To make dmake again, (using itself), you will have to set three environment
+variables.  See the files in readme/options for their names and their legal
+values.  Once set you can invoke dmake to make itself.
+
+
+DOCUMENTATION
+
+All documentation for dmake appears under the man directory.
+The file dmake.tf included in this distribution contains the troff
+source for the man page.  You must typeset it using the -man macros.
+If you cannot typeset it, the file dmake.p is a version that has been
+typeset for a normal dumb terminal.  The file dmake.p contains control
+characters.  The file dmake.nc is a version of the man page that has
+all of the control characters stripped.
+
+
+CREATING A NEW VERSION
+
+To create yet another version of dmake you should follow the following steps.
+
+The sysvr3 version as sent is the base version, all dmake versions must provide
+the equivalent of the functions defined in the sysvr3 directory, and MUST
+provide the same semantics (MSDOS archive lib searches are an exception since
+we cannot search libraries for timestamps in MSDOS, Actually the MKS version
+of dmake does this, I don't have the inclination to add this code though).
+
+1. Create a new directory for the version you will be making at the level
+   that is appropriate.  If it is a new OS then add the dir at the top level,
+   if it is a new version of UNIX then add it below the unix directory.
+
+2. Copy the files from the unix and unix/sysvr3 directories to the new dir.
+   (Or from any other directory sub-tree that is more appropriate)
+
+3. Not all OS/OSRELEASE combinations are compatible so in order to make
+   dmake on each, the particular directory may contain C-source for functions
+   present in the SVID SysV R3 distribution which are used by dmake but are
+   not supplied by the C-library in the target system.  For example the bsd43
+   directory contains source for tempnam.c since it is not provided with
+   the BSD C-library.  Before writing a new version of the source file
+   check the other directories to see if one already exists.
+
+4. Under some systems the standard include files may be missing or incorrect.
+   eg. under BSD stdarg.h and string.h.  If this is the case
+   you should create the proper .h file in the proper directory.
+   This works as expected as the compile line includes the flag -Idir
+   where dir is the configuration dir, (bsd43 for example) and any
+   standard include files will be searched for in dir before the compiler
+   looks in the normal places (if you have a sane compiler :-).
+
+5. Modify dmake.sh to contain the appropriate C compiler flags and link command
+   and to include any specific C files that you have had to add for this
+   version of dmake, and run the result through the shell.
+   (make the same changes to config.mk so that once you have a working copy of
+   dmake you can use it to bring itself up to date)
+
+6. Send me the changes :-) so that I can incorporate them into future
+   distributions.
+
+7. This should be all that you require to create a new version of dmake.
+   If you have any questions send e-mail to dvadura@plg.uwaterloo.ca

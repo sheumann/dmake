@@ -1,0 +1,13 @@
+This file describes the Atari-tos distribution of dmake.
+
+The code to compile on an Atari-ST using GCC was supplied by Edgar Roeder
+(roeder@cs.uni-sb.de).  I do not have an ST on which to verify the
+distribution sources but I have no reason to believe them to not work.
+If there are any problems please let Edgar or myself know.
+
+I know of no bugs or limitation to the the Atari-ST implementation.  Note that
+it is similar to the DOS version but it does not swap itself out.  This does
+not appear to be as much of a problem on the Atari as it is on MSDOS boxes :-).
+See the readme/msdos file for further information.
+
+-dennis

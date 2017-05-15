@@ -1,0 +1,448 @@
+This is the README file for dmake, Apple IIgs v1.0, running Gno/ME.
+
+If you find a bug that is not mentioned in the "TO DO" section below, please
+report it.
+
+
+============
+INSTALLATION
+============
+
+The default installation uses the following directories:
+
+	/usr/local/bin		-- executables
+	/usr/local/lib		-- configuration file
+	/usr/man		-- documentation
+
+If you do not have these directories or if you prefer the files to be
+located elsewhere, you will either have to edit the makefile, the install
+script, or do a manual installation.  Do not try to do an installation
+by typing "dmake" from the top level directory; this is currently broken.
+
+For automated installation using dmake (uses "Makefile.mk"):
+
+	cd dmake/unix/gno
+	dmake install
+
+For automated installation using the shell script:
+
+	cd dmake/unix/gno
+	./install
+
+If you want to do a manual installation:
+
+        file:           goes to:
+
+        dmake/unix/gno/dmake		/usr/local/bin/dmake
+        dmake/unix/gno/GS.startup.mk	/usr/local/lib/startup.mk
+        dmake/man/dmake.nc		$USRMAN/cat1/dmake.1
+	rmroot/rmroot			/usr/local/bin/rmroot
+	rmroot/rmroot.1			$USRMAN/man1/rmroot.1
+
+	Note:	If you want to place rmroot anywhere else, you will have to
+		edit the recipe for .REMOVE in /usr/local/lib/startup.mk to
+		use the proper path.  You can use just "rmroot" rather than
+		"/usr/local/bin/rmroot", but giving the full pathname will
+		reduce execution time.
+
+In all cases, put this into your gshrc:
+
+	#
+        # Set environment variables for dmake
+	#
+
+	# Mandatory definitions; location of the startup configuration
+	#  file and shell.
+
+        setenv MAKESTARTUP "/usr/local/lib/startup.mk"
+        setenv SHELL       "/bin/gsh"
+
+	# If you define NOPURGE, dmake will _not_ do a memory purge on
+	#   startup.
+
+	# setenv NOPURGE 1
+
+	#
+	# End of dmake environment variables
+	#
+
+===========
+COMPILATION
+===========
+
+In order to compile dmake, you need:
+
+	The lenviron library, version 1.1.2 or later (current lenviron
+	release is v1.1.4).  You should use the latest release in order
+	to get bug fixes which affect dmake;
+
+	Soenke Behrens' occ front end for Orca/C;
+
+	Orca/C v2.0.1 or later; and
+
+	Gno v2.0.4 (with modified libraries) or later;
+
+Contrary to the overall instructions for dmake, you cannot make the IIgs
+version from the main directory.  Instead, change directory into
+dmake/unix/gno and type (without the quotes):
+
+	"dmake dmake"
+		If you have a previously compiled version of dmake;
+
+	"make.sh"
+		If you have none of the above make utilities.  This is
+		an APW command file.
+
+=============
+RELEASE NOTES
+=============
+
+1.  Dmake requires Gno/ME v2.0.0 or later.
+
+2.  New users, _please_ read the manual page and this file in detail.  Many
+of your questions are already answered.  However, if something has you
+"stumped", post a question to comp.sys.apple2.gno.  A postscript version
+of the man page (landscape orientation, 2 pages per sheet) is available
+with this archive (dmake.ps.Z) via ftp to caltech, grind, or pindarus.
+
+    The file dmake.ps.Z is for dmake v3.8 patch level 1.  For the IIgs
+version, all information in that man page is applicable, but there is further
+info in this file with which you should familiarize yourself.
+
+3.  Ensure you have your gshrc in your $HOME directory when dmake is run;
+this affects commands where sub-shells must be started.
+
+4.  The default settings in startup.mk will cause Orca/C to use the
+"#pragma ignore" directive.  If you don't like this, remove the "-i" from
+the definitions of CFLAGS, MAINFLAGS, and VAFLAGS in startup.mk.
+
+5.  Use of dmake with the default startup.mk file requires the use of Soenke
+Behrens' occ front end for Orca/C.  If you don't like this, you just have to
+modify startup.mk appropriately.  See the man page.
+
+6.  See the end of this file for copying and use restrictions.
+
+=====
+ FAQ
+=====
+
+Q:  Can I use Unix makefiles with dmake?
+
+A:  Yes, in fact dmake is originally a Unix utility.  In particular, it
+    expects action lines to start with tabs (although spaces can be used
+    if invoked with the -B flag or .NOTABS macro), and has a rich macro
+    language.
+
+Q:  When I include "rm *.o *.root" as an action, I get "dmake: Error --
+    rm: No such file or directory", yet it works when typed from the shell.
+
+A:  In many installations of Gno, rm is an alias for "cp -p rm".  In order
+    for dmake to find a command it must either be a file within your $PATH,
+    or be prefixed by a '+' (as in "+rm") so that it can be executed with a
+    sub-shell.
+
+    In order use the rm command without invoking a sub-shell, use either
+    "cp -p rm" or "$(RM)".  Note that if you use wildcards in the filename
+    arguments then a sub-shell will still be invoked.
+
+Q:  dmake is rebuilding a target for which the dependancies have not changed
+    since the last build.  Why?
+
+A:  On the Apple IIgs, file timestamps do not have seconds.  As a safety
+    precaution, any target which has the same timestamp as at least one of
+    its prerequisites will be remade.  Therefore, if a target was made within
+    a minute of updating its prequisite, it will be remade later.
+
+Q:  Does it matter where I install the dmake files?
+
+A:  No, as long as the location of the startup.mk file is defined by the
+    MAKESTARTUP environment variable.  You must also edit the recipe for
+    $(RM) in startup.mk to reflect the location of rmroot(1).
+
+Q:  I'm getting unexpected output when using the function macros such
+    as $(subst,.o,.c text).  Is this a bug?
+
+A:  This is often due to inappropriate spaces placed in the macro definition.
+    Note that there are no spaces after the commas in function macros.
+
+
+=========================
+KNOWN BUGS & "TO DO" LIST
+=========================
+
+If a target and recipe similar to
+	file.o			: file file.h fubar.h schnib.h
+		cc -c file.c
+is given without an explicit recipe for making "file", the default rules in
+startup.mk will result in a stack overflow.  If you are not using the debugging
+version of dmake, this will likely result in a crash to the monitor, as no
+stack checking is done in the optimized version.  It is unclear whether this is
+a bug with Orca/C or one introduced while porting dmake to Gno; it does not
+appear in the SVR4 version.  The debugging version of dmake is labelled
+as such in it's rVersion resource fork (see getvers(1)) and is available via
+anonymous ftp from menaik.cs.ualberta.ca in /pub/gno.
+
+The top level makefile should be fixed so that a make can be done from the
+top level directory.
+
+The Gno version should be incorporated into the base version.
+
+
+=======
+CHANGES -- Ignore comments in square brackets; they are for internal
+=======    reference, and therefore may not be otherwise meaningful.
+
+v1.0    -- Added a check on the return value of setenv() in execp()
+           when using default $PATH.  [runargv.c]
+
+	   Made a few changes to the lenviron library, upon which dmake
+	   is dependant.  This included fixing a bug where the first
+	   (physically) listed directory in $PATH would not be checked for
+	   executables.
+
+	   Sources are provided for this distribution.  Sources were also
+	   cleaned up and placed in the expected hierarchy.
+
+	   The assignment of segments was redone; hopefully they're now
+	   grouped a bit better according to usage.
+
+	   On startup, dmake will do a memory purge provided that the
+	   environment variable NOPURGE is _not_ set.  Unless there are
+	   complaints, I will be leaving this implemented as a
+		system("purge >.null");
+
+	   Under conditions where dmake removes the intermediate *.o files,
+	   it was not removing the respective *.root files.  This is now fixed
+	   Through a bit of a kludge; the default .REMOVE rule defined in
+	   startup.mk now invokes "rmroot" as well as "rm".  "rmroot" will
+	   delete .root files for any .a or .o files given as arguments on its
+	   command line.  The .a and .o files don't actually have to exist.
+	   "rmroot" will ignore any other arguments.
+
+	   Cleaned up the code a bit with the help of gcc.  There were spots
+	   where sloppy conditionals may have made incorrect branches.
+
+	   Fixed bug where, if an absolute path name was used in a recipe,
+	   there was an inappropriate free. [runargv.c: strdup'd path in execp]
+
+	   The bug with using a makefile in other than the current directory
+	   (the -f option) seems to be fixed, although it wasn't explicitly
+	   actioned.  Let me know if you find a problem with it.
+
+	   Similarily, the $00/0000 memory trashing bug seems to be fixed.
+	   This may be related to a reference to memory free'd in execp().
+
+	   Fixed bug where the $(shell ...) function macro was trying to dup
+	   stdin rather than stdout.  [function.c:  _exec_shell()]
+
+	   Standard location of files has been changed.  Binaries by default
+	   are now located in /usr/local/bin, and startup.mk in /usr/local/lib.
+	   Man pages remain in /usr/man.
+
+	   Added a $(MV) macro to startup.mk for the default move command.
+
+	   Added rules to startup.mk to allow Pascal targets to be correctly
+	   made.
+
+v0.4.3b -- No changes to dmake's executable, but the startup.mk file
+           was modified as listed below.  These changes make it pretty
+           well necessary to use Soenke's occ, but there's not much purpose
+           to using dmake without occ, anyway.
+
+                Use of the -r flag for CFLAGS, VAFLAGS was discontinued.
+                It may cause confusion to new users when their compilations
+                don't behave as expected, and knowledgable users can
+                always redefine the flags for themselves.
+
+                Redefined standard rules for making *.a, *.o, and *.root
+                files to be more intelligent; appropriate use is made of
+                occ's -a flag to achieve the desired result rather than
+                just forcing *.o files.  In other words, a *.a target will
+                use -a1, a *.o target will use -a0, and a *.root target
+                will use neither flag.
+
+v0.4.2b -- Initial release to general Apple II community (no source
+           included with this release).
+
+           Only the optimized executable was included with the distribution,
+           not the debug executable.
+
+           Fixed bug that was causing dmake to exit prematurely when
+           sent a ^Z. [Incorrect handling of wait()'s return value in
+           runargv.c::execp().]
+
+           The definition of $(SHELLMETAS) in /usr/bin/startup.mk was
+           modified to match gsh.  One biggie here is that using the
+           ':' pathname delimiter will no longer result in a subshell
+           being started.
+
+           Macros $(MAINFLAGS) and $(VAFLAGS) have been added to
+           /usr/bin/startup.mk for use with makedmake.
+
+v0.4.1b -- Fixed bug that make ^C do Bad Things (in particular, dmake
+           would hang waiting for a child that no longer existed).
+           [#pragma databank 1 for quit.c]
+
+           Added rules for resource (*.rez) files to startup.mk.
+
+           Changed definition of $(CC) in startup.mk from "scc" to "occ"
+           to correspond with the renaming of Soenke Behrens' front end
+           for the Orca/C compiler.
+
+           Added default CFLAG of -a0 in startup.mk to force the production
+           of *.o object files.  This will be over-ridden if the user's
+           makefile uses a macro definition of
+                CFLAGS =
+           rather than
+                CFLAGS +=
+
+           All *.c files were massaged with the new version of ccprep that
+           uses the __CCFRONT__ macro.
+
+           Changed the makefile search to search for just "makefile.mk",
+           followed by "Makefile"; the last search for "makefile" was
+           removed.  This is easily restored should GS/OS obtain a case-
+           sensitive file system by _not_ using -DNO_CASE when compiling
+           ruletab.c.
+
+           [dirbrk.c::If_root_path() and runargv.c::execp()]
+           dmake's definition of an absolute path name has changed from a
+           string containing '/' to either:
+
+                A string beginning with either '/' or ':' and with
+                length greater than 1; or
+
+                A string beginning with either ".d" or ".D" and with at least
+                least one character following either a ':' or '/'; or
+
+                A string beginning with a digit (GS/OS prefix).
+
+           Using '-' at the beginning of an action previously had no effect.
+           This has been fixed so that it will ignore errors generated by the
+           recipe line, similar to the effect of "dmake -k" or ".IGNORE".
+           [make.c::Exec_commands() -- When setting kludge_int1, there was
+           a mix of long integers and unsigned long integers.]
+
+           Avoided Orca/C bug that appeared in optimized version -- dmake
+           wouldn't be able to find its recipes. [Cannot use loop-invariant
+           optimization on getinp.c]
+
+           Added an initial memory purge when dmake starts up.  This won't
+           work if purge is not in the $(PATH), so it should be changed to
+           a normal purge routine rather than a system("purge").
+
+v0.4.0b -- Fixed bug where return values of commands are always ignored.
+           [execp returning 0 unless exec failed.  Recovered return values
+           during wait(2).]
+
+           The responsibility of case sensitivity for file names has been
+           dumped on to GS/OS via access(3) and fopen(3).  Dmake no longer
+           uses code that is inherently case sensitive for file names.
+           [Changed in lenviron exec.c]
+
+           Prefixes (numeric or otherwise) are now permitted in path names.
+           This applies to both actions within the makefile and to default
+           macros in /usr/bin/startup.mk.  If partial pathnames are used,
+           they still must reside within $PATH.  [Changed in lenviron exec.c]
+
+           The opening of temporary files was (I think) fixed, but cannot
+           be tested until an _execve(2) bug in kern v2.0.4 is fixed.
+           [access(3) not showing execute permissions for directories.
+           Changed in tempnam.c]
+
+           Bug was squashed that caused a stack error and abort when trying
+           to display warnings or errors.  [va code extracted from main.c
+           to va.c, compiled with -O8 and no -G]
+
+           Fixed bug that caused partial pathnames to be prefixed by "./".
+           (From interim version.) [execp() in runargv.c].
+
+           $PATH search direction matches gsh now (meaning that it's backwards
+           from the "norm").  [lenviron::exec.c]
+
+           Lengths of rule actions are no longer limited to 256 bytes; they are
+           limited by either available memory, or the maximum size allowed
+           as arguments to Kexecve.  Realistically, you should try to keep
+           them under 1k for portability reasons; some make's use system(2)
+           which often has a 1k limit.
+
+v0.3.0b -- Cleaned up code, deleted a lot of debug routines, started GS-
+           specific documentation.
+
+v0.2.3a -- Working with Gno v2.0.1 (Gno v1.1 never released?).
+
+v0.2.2a -- Working with Gno v1.0.  Awaiting Gno v1.1 prior to beta release.
+
+v0.2.1a -- Entire (almost) rewrite using virgin source.  Everything proto-
+           typed.  Still crashing, but simple rules work.
+
+v0.2.0a -- First modifications made by Devin Reade.  Crashing miserably.
+
+v0.1.0  -- Port to the IIgs started by James Brookes.
+
+
+===========
+BUG REPORTS
+===========
+
+send to (in order of priority):
+
+        glyn@cs.ualberta.ca    		or
+	gdr@myrias.ab.ca		or
+	dreade@gpu.srv.ualberta.ca	or
+	glyn@ersys.edm.ab.ca		If you still can't reach me, try
+					the comp.sys.apple2 newsgroup.
+
+Ensure you tell me what the makefile recipes are that are causing the
+problems.
+
+It is much more helpful to me if you can dump the output (both stdout and
+stderr) from a problem dmake run to a file and send it to me.  [I don't
+need it in a separate file from your email, but the exact output of dmake
+is more helpful than an approximation from memory.]
+
+================
+ACKNOWLEDGEMENTS
+================
+
+dmake was written by Dennis Vadura, dvadura@watdragon.uwaterloo.ca
+CS DEPT, University of Waterloo, Waterloo, Ont., Canada.
+
+The initial port of dmake to the Apple IIgs was made by James Brookes.
+
+I would like to thank the following people for their help during beta
+testing:  Soenke Behrens, James Brookes, Mike Hackett, Kevin Henigan,
+Dave Huang, Gerald Lester, and Dave Tribby.  And of course thanks to
+Jawaid Bazyar and Procyon for making it all possible.
+
+GNO and GNO/ME are trademarks of Procyon Enterprises Incorporated.
+
+This program includes routines developed by the University of California,
+Berkeley, and its contributors.
+
+Unix is a registered trademark of AT&T Bell Laboratories.
+
+This program contains material from the Orca/C Run-Time Libraries,
+copyright 1987-1994 by Byte Works, Inc.  Used with permission.
+
+Apple IIgs and GS/OS are registered trademarks of Apple Computer, Inc.
+
+==========================
+COPYRIGHT and DISTRIBUTION
+==========================
+
+--      Copyright (c) 1990 by Dennis Vadura.  All rights reserved.
+--
+--      This program is free software; you can redistribute it and/or
+--      modify it under the terms of the GNU General Public License
+--      (version 1), as published by the Free Software Foundation, and
+--      found in the file 'LICENSE' included with this distribution.
+-- 
+--      This program is distributed in the hope that it will be useful,
+--      but WITHOUT ANY WARRANTY; without even the implied warrant of
+--      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+--      GNU General Public License for more details.
+-- 
+--      You should have received a copy of the GNU General Public License
+--      along with this program;  if not, write to the Free Software
+--      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.

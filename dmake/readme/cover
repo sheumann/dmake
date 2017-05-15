@@ -1,0 +1,60 @@
+This is the DMAKE Version 3.8 distribution.  DMAKE is a Make like tool that
+has been written by me and has been used by individuals at the University of
+Waterloo.  This release replaces the previous version 3.7 release which is no
+longer supported.  Please read the file 'readme/release' which accompanies
+this distribution and describes details of this release (This note is found
+in readme/cover).
+
+dmake is available for anonymous ftp from watmsg.uwaterloo.ca address is
+129.97.141.9.  It is in the pub/dmake directory, set your mode to binary,
+and copy either:
+
+	dmake38.tar.Z		- compressed tar archive
+	dmake38.zoo		- zoo archive
+	dmake38-msdos-exe.zoo	- MSDOS executable zoo archive
+
+	dmake38.shar01		- xx part shar archive, get all parts
+	...
+	dmake38.sharxx
+
+	dmake38.patchY          - Patch Y for dmake 3.8
+
+Note that all archives are created on a UNIX system.  This means that the
+distributions heading for DOS-land need to have the <lf> turned into a
+<cr><lf>.  There exist a number of filters for doing this (sed comes to mind),
+and is easily run over each file using a UNIX shell script.  Thus I don't
+provide two different versions of the archives.
+
+dmake is different from other versions of make in that it supports significant
+enhancements (See the man page).  A short summary of the more important
+ones follows:
+
+	. support for portable makefiles
+	. runs on many platforms (DOS, generic unix [sysv and bsd4.3],
+	  apollo, OS/2, Atari, and many others)
+	. significantly enhanced macro facilities
+	. transitive closure on inference graph
+	. sophisticated inference algorithm
+	. support for traversing the file sytem both during making of targets
+	  and during inference
+	. %-meta rules for specifying rules to be used for inferring
+	  prerequisites
+	. highly configurable
+	. support for libraries
+	. parallel making of targets on architectures that support it
+	. attributed targets
+	. text diversions
+	. group recipes
+	. swapping itself to DISK under MSDOS
+	. supports MKS extended argument passing convention
+
+All code found in this distribution is original and written by me except where
+noted in the source and the following:
+
+- dbug/dbug package from Fred Fish  (dmake DEBUG=1, to make a debugging version
+  of dmake)
+
+- malloc.c package in dbug/malloc from the NET, see the directory for
+  attribution.
+
+-dennis

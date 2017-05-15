@@ -1,0 +1,9 @@
+To unpack the DMAKE manual page please issue the following sequence of
+commands:
+
+	uudecode dmake.uue
+	uncompress dmake.Z
+	mv dmake dmake.p
+
+NOTE:  You only need to do this if you cannot typeset the manual page
+       yourself.

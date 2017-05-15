@@ -1,0 +1,70 @@
+dmake Version 3.8 Patch #1
+==========================
+
+Nature:  This patch fixes the anoying problem with POSIX_NAME_MAX and NAME_MAX
+-------  incompatibility that I introduced with version 3.8.  I hope this
+	 makes all of the problems go away.  I may have gotten it wrong for
+	 some systems (mac, atari, os2) if so then please let me know and
+	 I shall add the fix.
+
+Availability:
+-------------
+	 This patch is available for anonymous ftp from watmsg.uwaterloo.ca
+	 (129.97.141.9) as:
+
+	     pub/dmake/dmake38-patch1.Z
+
+	 You must apply the patch to version 3.8 PL0 of dmake.  If you do not
+	 want to apply the patch yourself you can get the full distribution
+	 from watmsg.  It has the patch applied.  To get the whole
+	 distribution grab the files that most suit your unpacking
+	 facilities.
+
+              pub/dmake/dmake38.tar.Z           - compressed tar archive
+              pub/dmake/dmake38.zoo             - zoo archive
+              pub/dmake/dmake38-msdos-exe.zoo   - MSDOS executable zoo archive
+              pub/dmake/dmake38.shar01          - xx part shar archive
+              ...                                 (get all parts)
+              pub/dmake/dmake38.sharxx
+
+	 To apply the patch simply uncompress it and run the result through
+	 /bin/sh.  The patch requires the availability of the patch program
+	 in order to function correctly.  Everything is done for you by the
+	 script.
+
+=============== Summary of fixes =============================================
+- For Coherent version of dmake, added the equivalent of
+
+     #define void int 
+
+  through the use of -D command line flag.
+
+- Minor tweaks to the control-C handling under MSDOS, it should now terminate
+  more quickly and deliver correct error codes back to dmake.
+
+- replaced the use of _POSIX_NAME_MAX as the file component length to,
+  NAME_MAX, this should greatly enhance portability as I have supplied
+  NAME_MAX definitions for those OS's that don't potentially have it already.
+  (bloody braindamage here folks)
+
+- Deleted the file unix/explode.c.  The code there is no longer used and
+  should not have been distributed (blush).  Oh well, dese tings do 'appen!
+
+- Deleted the use of #elif define(blah) to satisfy broken compilers.
+
+- Added a 'limits.h' file to unix/bsd43 (it's blank, normal distributions of
+  BSD43 don't come with this file)
+
+- Compiles and works using gcc under Sun OS 4.1.1, hopefully now works elsewhere
+  using gcc as well.  Let me know of problems you may come accross.
+
+- Changed Sun tempnam.c code to make sure we don't write to a static string.
+  Also fixed a call to Closefile() in state.c to not pass any parameters.
+
+- Added -X flag to allow users to suppress execution of #! line at start of
+  makefile.
+
+- Fixed arlib.c for 386i boxes, it now correctly sets PORTAR prior to
+  including <ar.h>.
+
+- Cleaned up output of dmake -h a little.

@@ -1,0 +1,8 @@
+#!/bin/sh
+/bin/cp dmake /usr/local/bin
+/bin/cp GS.startup.mk /usr/local/lib/startup.mk
+/bin/cp ../../man/dmake.nc /usr/man/cat1/dmake.1
+/bin/cp ../../../rmroot/rmroot.1 /usr/man/man1/rmroot.1
+/bin/cp ../../../rmroot/rmroot /usr/local/bin
+echo Ensure you delete any dmake and startup.mk file you may have in
+echo /usr/bin from a previous install.

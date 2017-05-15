@@ -1,0 +1,109 @@
+dmake Version 3.8
+=================
+
+FULL RELEASE OF DMAKE, REPLACES VERSION 3.7
+
+Nature:  This release is an attempt at addressing all of the little obscure
+-------  bugs and "features" that still remained in dmake and often caused
+	 spurious or incorrect behaviour.  As such there is no major new
+	 functionality but several small enhancements to make life a little
+	 more interesting.
+
+	 This distribution advances dmake to Version 3.8, patch level 0.
+
+
+Availability:
+-------------
+	  dmake is available via anonymous ftp from watmsg.uwaterloo.ca
+	  (129.97.141.9) as:
+
+	      pub/dmake/dmake38.tar.Z		- compressed tar archive
+	      pub/dmake/dmake38.zoo		- zoo archive
+	      pub/dmake/dmake38-msdos-exe.zoo	- MSDOS executable zoo archive
+	      pub/dmake/dmake38.shar01		- xx part shar archive
+	      ...				  (get all parts)
+	      pub/dmake/dmake38.sharxx
+
+	  and comes in several archive formats.  Choose the one that best
+	  suits your needs.
+
+Acknowledgements:
+-----------------
+	  Thanks to all who submitted code for new features, suggestions for
+	  improvements, and bug fixes.  I have tried to make sure no gotchas
+	  remain, if you encounter problems installing or running dmake please
+	  let me know.  As always, I am always happy to receive e-mail.
+
+
+DETAILS OF ENHANCEMENTS/TWEAKS:
+===============================
+- Added the following functionality:
+ 
+	#! command
+ 
+  is scanned for and recognized if it is the first line of your makefile.
+  The command string is expanded and executed.
+  The command is restricted in that it cannot be a command requiring a shell
+  for it's execution.  The values of the command line macros have been set
+  and are available for execution purposes.  This is not as general as one
+  would like but it is not bad for bootstrapping different non dmake
+  makefiles.  If the command result code is zero, then dmake continues parsing
+  its input and processes the makefile.  If the result is non-zero dmake
+  exits.  (suggested by Paul Sander, paul@hal.com)
+ 
+- Allowed the inclusion of white space inside quoted prerequisites.
+  i.e. you can now say:
+
+      foo : "some stuff"
+
+  and have "some stuff" treated as a single prerequisite.  The mod is
+  necessary to allow for prerequisites that contain $(shell ... ) expansion
+  scripts and other simillar function macros.
+
+- Changed the following piece of code to be more in line with dmake
+  philosophy.  That is, $(macname:str=sub) now expands 'sub' prior to
+  performing the substitution, however if '-A' or '.AUGMAKE := yes' are
+  specified then the expansion is suppressed.
+ 
+- Added _POSIX_NAME_MAX to the source, on any stat if the basename of a file
+  is larger than the value of _POSIX_NAME_MAX then it returns 0.  You must
+  define _POSIX_NAME_MAX in a lower level config if you want it to override
+  the default in {unix,msdos,mac,os2,atari}/config.h.
+
+- Disallowed export of macros whose names contain the characters "+=:*"
+  as these are valid macro assignment operators and we don't want to cause
+  trouble when we go to reparse the environment again.  Perhaps the fix
+  could be a little bit less drastic, but for now it seems reasonable.
+
+- Tweaked the output of -v to more accurately show which of a set of ::
+  targets is getting made.  The info was there so I might as well use it.
+
+- Added a seperate directory substructure for XENIX since I was having trouble
+  linking properly in the generic SYSVR3 environment.  Looks as if you pretty
+  much need 'make xenixpwd' since XENIX uses popen to call getcwd.
+  If you use 'make xenix' and your implementation of xenix uses popen this
+  causes dmake to get confused about child processes and occationally
+  complain that it lost one.
+ 
+- Cleaned up OS/2 building scripts, and made sure that OS2 define is checked
+  where needed.
+ 
+
+DETAILS OF BUG FIXES:
+=====================
+- Fixed the handling of :: targets if they appear first in the makefile.
+  This was incorrectly handled by the internal DAG construction code, ugly!.
+
+- Fixed an output statement in dump.c so that macro values containing %
+  signs are correctly printed (guess where that broke, blush).
+
+- Fixed a bug in dealing with .SETDIR=a targets and multiprocessing.  Too
+  obscure to describe but annoying if you stumble onto it.
+
+- Fixed DIRSEPSTR macro to be user modifiable (as the manpage claims :-)
+  so that people can change it in startup.mk depending on shell/OS
+  (mostly effects DOS and/or OS/2 implementations).
+ 
+- Fixed a bug dealing with complex .IF/.ELIF/.ELSE/.END expressions.
+  It now correctly selects only a single matching instance in a complex
+  .IF/.ELIF/.ELSE/.END expr.
