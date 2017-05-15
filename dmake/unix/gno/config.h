@@ -43,26 +43,11 @@
  * macros. */
 #define coreleft() 0L
 
-/* Define the getcwd function that is used in the code, since BSD does
- * not have getcwd, but call it getwd instead. */
-extern	char*	getwd ANSI((char*));
-#define	getcwd(buf,siz)	getwd(buf)
-
 /* We don't care about CONST */
-#define CONST
+#define CONST const
 
 /* a small problem with pointer to voids on some unix machines needs this */
 #define PVOID void *
 
-/* Sequent dynix doesn't have tzset() Arrrrgh! */
+/* GNO 2.0.6 doesn't have tzset() Arrrrgh! */
 #define tzset()
-
-#if defined(GNO)
-#  if !defined (PATH_MAX)
-#    define PATH_MAX 64
-#  endif
-
-#  if !defined(NAME_MAX)
-#    define NAME_MAX 15
-#  endif
-#endif /* GNO */
