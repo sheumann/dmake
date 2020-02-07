@@ -40,7 +40,7 @@ PUBLIC void
 Remove_prq( CELLPTR tcp )
 {
    static  LINKPTR rlp = NIL(LINK);
-   static  flag = 0;
+   static  int flag = 0;
    static  HASHPTR m_at, m_q, m_b, m_g, m_l, m_bb, m_up;
    char    *m_at_s, *m_g_s, *m_q_s, *m_b_s, *m_l_s, *m_bb_s, *m_up_s;
    LINKPTR tlp;
